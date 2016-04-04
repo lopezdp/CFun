@@ -1,0 +1,33 @@
+#include <stdio.h> 
+//Write a program in C that computes and prints out the first six digits in the Fibonacci sequence. 
+//You will need to look up the definition of the Fibonacci sequence if you don't know it. 
+//The first two numbers in the sequence are 0 and 1, but your program should compute the next four digits. 
+//0,1,1,2,3,5
+
+int main()
+{
+	int count;
+	int f1 = 0;
+	int f2 = 1;
+	int currfib = 0;
+	int n;
+
+	printf ("Enter number of terms: ");
+	scanf ("%d", &n);
+
+	printf ("Your Fibonacci Series is: %d, %d, ",f1,f2);
+	count = 2;
+
+	while (count < n)
+	{
+		currfib = f1 + f2;
+		f1 = f2;
+		f2 = currfib;
+		count ++;
+
+		printf ("%d, ", currfib);
+
+	}
+	
+	return 0;
+}

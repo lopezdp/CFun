@@ -1,0 +1,15 @@
+//arduino sound 
+
+void setup() {
+  
+
+}
+
+void loop() {
+  // play two tones at two frequencies using square waves
+  tone(8,988,1000);
+  delay(1000);
+  tone(8,1047,1000);
+  delay(1000);
+
+}

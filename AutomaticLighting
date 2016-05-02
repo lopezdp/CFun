@@ -1,0 +1,43 @@
+/*
+  PhotoSensor AutoLED ON
+ Demonstrates analog input by reading a photo sensor on analog pin 0 and
+ turning on and off a light emitting diode(LED) connected to digital pin 2.
+ The amount of time the LED will be on and off depends on
+ the value obtained by analogRead().
+
+ The circuit:
+ * Photosensor attached to analog input 0
+ * one side pin (either one) to ground
+ * the other side pin to +5V
+ * LED anode (long leg) attached to digital output 2
+ * LED cathode (short leg) attached to ground
+
+ 
+ Created by David Lopez
+ modified 1 May 2016
+ */
+
+int sensorPin = A0;    // select the input pin for the potentiometer
+int ledPin = 2;      // select the pin for the LED
+int sensorValue = 0;  // variable to store the value coming from the sensor
+
+void setup() {
+  // declare the ledPin as an OUTPUT:
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // read the value from the sensor:
+  sensorValue = analogRead(sensorPin);
+  // turn the ledPin on if sensor value > 0
+  if(sensorValue > 128)
+  {
+    digitalWrite(ledPin, HIGH);
+    delay(sensorValue);
+  }
+  else
+  {
+    digitalWrite(ledPin, LOW);
+    delay(sensorValue);
+  }
+}

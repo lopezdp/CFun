@@ -1,0 +1,89 @@
+#include <EEPROM.h>
+
+#define READ_CMD "read"
+#define WRITE_CMD "write"
+#define ARGUMENT_SEPERATOR ' '
+#define MIN_EEPROM_ADDRESS 0
+#define MAX_EEPROM_ADDRESS 1023
+#define MIN_DATA_VALUE 0
+#define MAX_DATA_VALUE 255
+#define INVALID_NUMBER -1
+#define SERIAL_BUFFER_TIMEOUT 100
+
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(SERIAL_BUFFER_TIMEOUT);
+      
+    Serial.print("Please input a command: \n");
+    Serial.print("READ or WRITE. \n");
+    Serial.print("READ takes one argument, \n");
+    Serial.print("the memory address.\n");
+    Serial.print("WRITE takes two arguments, \n");
+    Serial.print("first, is memory address,\n"); 
+    Serial.print("second, is the data you\n");
+    Serial.print("want entered in memory.\n");
+}
+
+int getNumber(String str, int minRange, int maxRange)
+{
+  for (int i=0; i<str.length(); i++)
+  {
+    if (!isDigit(str[i]))
+      return INVALID_NUMBER;
+  }
+
+  if (str.length() > 0)
+  {
+    int value = str.toInt();
+    return (value >= minRange && value <= maxRange) ? value : INVALID_NUMBER;
+  }
+  
+  return INVALID_NUMBER;
+}
+
+void loop() {
+
+  if (Serial.available())
+  {
+    String commandStr = Serial.readStringUntil(ARGUMENT_SEPERATOR);
+
+    if (commandStr == READ_CMD)
+    {
+      int address = getNumber(Serial.readStringUntil(ARGUMENT_SEPERATOR), MIN_EEPROM_ADDRESS, MAX_EEPROM_ADDRESS);
+      if (address == INVALID_NUMBER)
+      {
+        Serial.print("Address not specified or invalid. Valid address range: "); Serial.print(MIN_EEPROM_ADDRESS); Serial.print("-"); Serial.println(MAX_EEPROM_ADDRESS);
+      }
+      else
+      {
+        byte value = EEPROM.read(address);
+        Serial.print("EEPROM READ  @ "); Serial.print(address); Serial.print(" - ");  Serial.println(value, DEC);
+      }
+    }
+    else if (commandStr == WRITE_CMD)
+    {
+      int address = getNumber(Serial.readStringUntil(ARGUMENT_SEPERATOR), MIN_EEPROM_ADDRESS, MAX_EEPROM_ADDRESS);
+      int data = getNumber(Serial.readStringUntil(ARGUMENT_SEPERATOR), MIN_DATA_VALUE, MAX_DATA_VALUE);
+      
+      if (address == INVALID_NUMBER)
+      {
+        Serial.print("Address not specified or invalid. Valid address range: "); Serial.print(MIN_EEPROM_ADDRESS); Serial.print("-"); Serial.println(MAX_EEPROM_ADDRESS);
+      }
+      else if (data == INVALID_NUMBER)
+      {
+        Serial.print("Data not specified or invalid. Valid data range: "); Serial.print(MIN_DATA_VALUE); Serial.print("-"); Serial.println(MAX_DATA_VALUE);
+      }
+      else
+      {
+        Serial.print("EEPROM WRITE @ "); Serial.print(address); Serial.print(" - ");  Serial.println((byte)data, DEC);
+        EEPROM.write(address, (byte)data);
+      }
+    }
+    else
+    {
+      Serial.println("Command not specified or invalid. Valid commands are: read, write.");
+    }
+
+    Serial.readString();
+  }
+}
